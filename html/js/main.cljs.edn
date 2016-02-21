@@ -1,0 +1,2 @@
+{:require [ascii-never-dies.core ascii-never-dies.login]
+ :compiler-options {:asset-path "js/main.out"}}
