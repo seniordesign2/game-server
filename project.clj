@@ -1,15 +1,13 @@
-(defproject ascii-never-dies "1.0.0"
+(defproject ascii-never-dies "0.0.1"
   :description "Web-based rogue-lite written in Clojure"
   :url "https://github.com/seniordesign2/game-client"
-  :min-lein-version "2.6.1"
+  :min-lein-version "2.0.0"
   :dependencies [
                  [org.clojure/clojure "1.7.0"]
-                 [org.clojure/clojurescript "1.7.170"]
                  [compojure "1.4.0"]
-                 [ring/ring-jetty-adapter "1.4.0"]
-                 [environ "1.0.0"]
-                 [org.clojure/java.jdbc "0.4.2"]
-                 [org.postgresql/postgresql "9.4-1201-jdbc4"]
-                ]
-  :source-paths #{"src/cljs"}
-  :resource-paths #{"html"})
+                 [ring/ring-defaults "0.1.5"]
+                 ]
+  :plugins [[lein-ring "0.9.7"]]
+  :ring {:handler ascii-never-dies.handler/app}
+  :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
+                                  [ring/ring-mock "0.3.0"]]}})
