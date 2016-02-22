@@ -1,1 +1,1 @@
-# game-client
+# game-server
