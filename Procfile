@@ -1,1 +1,1 @@
-web: lein run -m ascii-never-dies.handler 3000
+web: java $JVM_OPTS -cp target/ascii-never-dies-standalone.jar clojure.main -m ascii-never-dies.handler
