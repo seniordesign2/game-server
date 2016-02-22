@@ -1,0 +1,1 @@
+web: lein run -m ascii-never-dies.handler 3000
