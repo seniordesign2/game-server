@@ -4,14 +4,28 @@
             [compojure.route :as route]
             [ring.adapter.jetty :as jetty]
             [environ.core :refer [env]]
-            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
+            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
+            [clojure.java.jdbc :as db]))
 
 (defn splash []
   {:status 200
-   :headers {"Content-Type" "text/plain"}
-   :body (pr-str ["Hello World"])})
+   :headers {"Content-Type" "text/html"}
+   :body (concat ["<ul>"]
+                 (for [sel (db/query (env :database-url)
+                                     ["select * from test"])]
+                   (format "<li>%s</li>" sel))
+                 ["</ul>"])})
+
+(defn record [input]
+  (db/insert! (env :database-url "postgres://localhost:5432/and-db")
+              :test {:content input}))
 
 (defroutes app-routes
+  (GET "/add" {{input :input} :params}
+       (record input)
+       {:status 200
+        :headers {"Content-Type" "text/plain"}
+        :body (str "Added " input)})
   (GET "/" []
        (splash))
   (route/not-found "Not found"))
