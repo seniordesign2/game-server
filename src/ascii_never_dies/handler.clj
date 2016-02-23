@@ -43,7 +43,7 @@
        (splash))
   (route/not-found "Not found"))
 
-(def app (app-routes))
+(def app app-routes)
 
 (defn -main []
   (let [port (Integer. (or (env :port) 5000))]
