@@ -14,7 +14,8 @@
 
 (cas/defrpc update-record
   [id {:keys [content]}]
-  (db/execute "UPDATE IN test SET content = ? WHERE id = ?" x y id)
+  (db/insert! (env :database-url "postgres://localhost:5432/and-db")
+              :test {:content content})
   (get-record id))
 
 (defn splash []
