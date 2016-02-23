@@ -8,6 +8,9 @@
             [clojure.java.jdbc :as db]
             [castra.core :as cas]))
 
+(cas/defrpc test
+  "Test success!")
+
 (cas/defrpc get-record
   [id]
   (first (db/query "SELECT * FROM test WHERE id = ?" id)))
@@ -43,7 +46,7 @@
        (splash))
   (route/not-found "Not found"))
 
-(def app app-routes)
+(def app (-> (fn [_] {:status 404 :body "not found"}) (wrap-castra app-routes)))
 
 (defn -main []
   (let [port (Integer. (or (env :port) 5000))]
