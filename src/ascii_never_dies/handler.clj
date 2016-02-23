@@ -24,7 +24,7 @@
   (GET "/add" {{input :input} :params}
        (record input)
        {:status 200
-        :headers {"Content-Type" "text/plain"}
+        :headers {"Content-Type" "text/html"}
         :body (concat
                (str "Added " input)
                "<a href=\"/\">Back</a>")})
