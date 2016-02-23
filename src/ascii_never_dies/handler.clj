@@ -25,7 +25,9 @@
        (record input)
        {:status 200
         :headers {"Content-Type" "text/plain"}
-        :body (str "Added " input)})
+        :body (concat
+               (str "Added " input)
+               "<a href=\"/\">Back</a>")})
   (GET "/" []
        (splash))
   (route/not-found "Not found"))
