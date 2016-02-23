@@ -8,7 +8,7 @@
             [clojure.java.jdbc :as db]
             [castra.core :as cas]))
 
-(cas/defrpc test
+(cas/defrpc rpc-test []
   "Test success!")
 
 (cas/defrpc get-record
