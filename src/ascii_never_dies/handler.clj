@@ -41,6 +41,8 @@
                    "<br/><a href=\"/\">Back</a>")})
   (GET "/" []
        (splash))
+  (POST "/" []
+        {:status 200})
   (route/not-found "Not found"))
 
 (def app (wrap-defaults app-routes site-defaults))
