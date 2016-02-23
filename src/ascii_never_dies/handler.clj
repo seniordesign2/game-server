@@ -5,14 +5,24 @@
             [ring.adapter.jetty :as jetty]
             [environ.core :refer [env]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
-            [clojure.java.jdbc :as db]))
+            [clojure.java.jdbc :as db]
+            [castra.core :as cas]))
+
+(cas/defrpc get-record
+  [id]
+  (first (db/query "SELECT * FROM test WHERE id = ?" id)))
+
+(cas/defrpc update-record
+  [id {:keys [content]}]
+  (db/execute "UPDATE IN test SET content = ? WHERE id = ?" x y id)
+  (get-record id))
 
 (defn splash []
   {:status 200
    :headers {"Content-Type" "text/html"}
    :body (concat ["<ul>"]
                  (for [sel (db/query (env :database-url)
-                                     ["select * from test"])]
+                                     ["SELECT * FROM test"])]
                    (format "<li>%s</li>" sel))
                  ["</ul>"])})
 
@@ -25,16 +35,17 @@
        (record input)
        {:status 200
         :headers {"Content-Type" "text/html"}
-        :body (concat
-               (str "<b>Added:</b><br/>" input)
-               "<br/><a href=\"/\">Back</a>")})
+        :body (str "<b>Added:</b><br/>"
+                   input
+                   "<br/><a href=\"/\">Back</a>")})
   (GET "/" []
        (splash))
   (route/not-found "Not found"))
 
-(def app
-  (wrap-defaults app-routes site-defaults))
+(def app (wrap-defaults app-routes site-defaults))
 
-(defn -main [& [port]]
-  (let [port (Integer. (or port (env :port) 5000))]
-    (jetty/run-jetty (site #'app) {:port port :join? false})))
+(defn -main
+  ([]
+   (-main 5000))
+  ([port]
+   (jetty/run-jetty app  {:port port :join? false})))

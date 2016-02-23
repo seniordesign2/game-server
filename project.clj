@@ -10,6 +10,7 @@
                  [environ "1.0.0"]
                  [org.clojure/java.jdbc "0.3.5"]
                  [org.postgresql/postgresql "9.4-1201-jdbc4"]
+                 [hoplon/castra "3.0.0-alpha3"]
                  ]
   :plugins [[lein-ring "0.9.7"]
             [environ/environ.lein "0.3.1"]]
