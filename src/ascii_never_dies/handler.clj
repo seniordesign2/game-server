@@ -26,7 +26,7 @@
        {:status 200
         :headers {"Content-Type" "text/html"}
         :body (concat
-               (str "Added:<br/>" input)
+               (str "<b>Added:</b><br/>" input)
                "<br/><a href=\"/\">Back</a>")})
   (GET "/" []
        (splash))
