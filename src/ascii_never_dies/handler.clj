@@ -51,4 +51,4 @@
 
 (defn -main []
   (let [port (Integer. (or (env :port) 5000))]
-    (jetty/run-jetty app  {:port port :join? false})))
+    (jetty/run-jetty app-routes {:port port :join? false})))
