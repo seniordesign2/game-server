@@ -4,12 +4,12 @@
             [compojure.route :as route]
             [ring.adapter.jetty :as jetty]
             [environ.core :refer [env]]
-            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [clojure.java.jdbc :as db]
             [castra.core :as cas]
             [castra.middleware :refer [wrap-castra]]))
 
 (cas/defrpc rpc-test []
+  {:rpc [(allow)]}
   "Test success!")
 
 (cas/defrpc get-record
