@@ -47,7 +47,7 @@
        (splash))
   (route/not-found "Not found"))
 
-(def app-test (-> (fn [_] {:status 200 :body "found"}) (wrap-castra app-routes)))
+(def app-test (-> (fn [_] {:status 404 :body "not found"}) (wrap-castra app-routes)))
 
 (defn -main []
   (let [port (Integer. (or (env :port) 5000))]
