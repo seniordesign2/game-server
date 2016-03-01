@@ -13,8 +13,7 @@
 (cas/defrpc rpc-test []
   "Test success!")
 
-(cas/defrpc get-record
-  [id]
+(cas/defrpc get-record [id]
   (first (db/query "SELECT * FROM test WHERE id = ?" id)))
 
 (cas/defrpc update-record
@@ -33,7 +32,7 @@
                  ["</ul>"])})
 
 (defn record [input]
-  (db/insert! (env :database-url db-spec)
+  (db/insert! db-spec
               :test {:content input}))
 
 (defroutes app-routes
