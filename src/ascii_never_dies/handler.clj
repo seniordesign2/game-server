@@ -8,6 +8,8 @@
             [castra.core :as cas]
             [castra.middleware :refer [wrap-castra]]))
 
+(def db-spec (str (env :database-url) "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"))
+
 (cas/defrpc rpc-test []
   "Test success!")
 
@@ -17,7 +19,7 @@
 
 (cas/defrpc update-record
   [id {:keys [content]}]
-  (db/insert! (env :database-url "postgres://localhost:5432/and-db")
+  (db/insert! db-spec
               :test {:content content})
   (get-record id))
 
@@ -25,13 +27,13 @@
   {:status 200
    :headers {"Content-Type" "text/html"}
    :body (concat ["<ul>"]
-                 (for [sel (db/query (env :database-url)
+                 (for [sel (db/query db-spec
                                      ["SELECT * FROM test"])]
                    (format "<li>%s</li>" sel))
                  ["</ul>"])})
 
 (defn record [input]
-  (db/insert! (env :database-url "postgres://localhost:5432/and-db")
+  (db/insert! (env :database-url db-spec)
               :test {:content input}))
 
 (defroutes app-routes
