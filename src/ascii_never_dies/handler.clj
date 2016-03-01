@@ -16,8 +16,7 @@
 (cas/defrpc get-record [id]
   (first (db/query "SELECT * FROM test WHERE id = ?" id)))
 
-(cas/defrpc update-record
-  [id {:keys [content]}]
+(cas/defrpc update-record [id {:keys [content]}]
   (db/insert! db-spec
               :test {:content content})
   (get-record id))
@@ -51,4 +50,4 @@
 
 (defn -main []
   (let [port (Integer. (or (env :port) 5000))]
-    (jetty/run-jetty app-routes {:port port :join? false})))
+    (jetty/run-jetty (wrap-castra app-routes) {:port port :join? false})))
