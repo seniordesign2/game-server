@@ -36,7 +36,7 @@
               :test {:content input}))
 
 (defroutes app-routes
-  (GET "/add" {{input :input} :params}
+  (GET "/add/:input" [input]
        (record input)
        {:status 200
         :headers {"Content-Type" "text/html"}
@@ -51,4 +51,4 @@
 
 (defn -main []
   (let [port (Integer. (or (env :port) 5000))]
-    (jetty/run-jetty (wrap-castra app-routes) {:port port :join? false})))
+    (jetty/run-jetty app-routes {:port port :join? false})))
