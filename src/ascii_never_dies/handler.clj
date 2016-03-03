@@ -15,8 +15,8 @@
               :test {:content input}))
 
 (defn table-size []
-  (:count (db/query db-spec
-                    ["SELECT COUNT(*) FROM test"])))
+  (:count (first (db/query db-spec
+                           ["SELECT COUNT(*) FROM test"]))))
 
 (cas/defrpc rpc-test []
   (table-size))
