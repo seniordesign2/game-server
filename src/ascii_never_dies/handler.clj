@@ -15,16 +15,15 @@
               :test {:content input}))
 
 (defn table-size []
-  (get (db/query db-spec
-                 ["SELECT COUNT(*) FROM test"])
-       :count))
+  (:count (db/query db-spec
+                    ["SELECT COUNT(*) FROM test"])))
 
 (cas/defrpc rpc-test []
   (table-size))
 
 (cas/defrpc get-record [id]
-  (first (db/query db-spec
-                   ["SELECT * FROM test WHERE id = ?" (Integer. id)])))
+  (:content (first (db/query db-spec
+                             ["SELECT * FROM test WHERE id = ?" (Integer. id)]))))
 
 (cas/defrpc update-record [content]
   (do
