@@ -8,6 +8,10 @@
             [castra.core :as cas]
             [castra.middleware :refer [wrap-castra]]))
 
+(defn record [input]
+  (db/insert! db-spec
+              :test {:content input}))
+
 (def db-spec (str (env :database-url) "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"))
 
 (cas/defrpc rpc-test []
@@ -18,9 +22,9 @@
                    ["SELECT * FROM test WHERE id = ?" (Integer. id)])))
 
 (cas/defrpc update-record [content]
-  (db/insert! db-spec
-              :test {:content content})
-  (get-record id))
+  (do
+    (record content)
+    (get-record id)))
 
 (defn splash []
   {:status 200
@@ -30,10 +34,6 @@
                                      ["SELECT * FROM test"])]
                    (format "<li>%s</li>" sel))
                  ["</ul>"])})
-
-(defn record [input]
-  (db/insert! db-spec
-              :test {:content input}))
 
 (defroutes app-routes
   (GET "/add/:input" [input]
