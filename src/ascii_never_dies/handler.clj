@@ -50,4 +50,4 @@
 
 (defn -main []
   (let [port (Integer. (or (env :port) 5000))]
-    (jetty/run-jetty (wrap-castra app-routes) {:port port :join? false})))
+    (jetty/run-jetty (wrap-castra app-routes 'ascii-never-dies.handler) {:port port :join? false})))
