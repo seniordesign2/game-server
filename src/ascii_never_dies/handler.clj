@@ -21,7 +21,7 @@
   (first (db/query db-spec
                    ["SELECT * FROM test WHERE id = ?" (Integer. id)])))
 
-(cas/defrpc update-record [content]
+(cas/defrpc update-record [id {:keys [content]}]
   (do
     (record content)
     (get-record id)))
