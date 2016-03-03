@@ -14,17 +14,21 @@
   (db/insert! db-spec
               :test {:content input}))
 
+(defn table-size []
+  (db/query db-spec
+            ["SELECT COUNT(*) FROM test"]))
+
 (cas/defrpc rpc-test []
-  "Test success!")
+  "Test success!"(table-size))
 
 (cas/defrpc get-record [id]
   (first (db/query db-spec
                    ["SELECT * FROM test WHERE id = ?" (Integer. id)])))
 
-(cas/defrpc update-record [id {:keys [content]}]
+(cas/defrpc update-record [content]
   (do
     (record content)
-    (get-record id)))
+    (get-record (table-size))))
 
 (defn splash []
   {:status 200
