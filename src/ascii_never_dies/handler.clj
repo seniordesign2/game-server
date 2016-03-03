@@ -17,10 +17,10 @@
   (first (db/query db-spec
                    ["SELECT * FROM test WHERE id = ?" (Integer. id)])))
 
-;; (cas/defrpc update-record [content]
-;;   (db/insert! db-spec
-;;               :test {:content content})
-;;   (get-record id))
+(cas/defrpc update-record [content]
+  (db/insert! db-spec
+              :test {:content content})
+  (get-record id))
 
 (defn splash []
   {:status 200
