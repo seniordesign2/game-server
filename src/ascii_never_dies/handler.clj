@@ -14,7 +14,8 @@
   "Test success!")
 
 (cas/defrpc get-record [id]
-  (first (db/query "SELECT * FROM test WHERE id = ?" id)))
+  ;(first (db/query "SELECT * FROM test WHERE id = ?" id)))
+  id)
 
 (cas/defrpc update-record [id {:keys [content]}]
   (db/insert! db-spec
