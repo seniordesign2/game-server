@@ -17,7 +17,7 @@
   (first (db/query db-spec
                    ["SELECT * FROM test WHERE id = ?" (Integer. id)])))
 
-(cas/defrpc update-record [id {:keys [content]}]
+(cas/defrpc update-record [content]
   (db/insert! db-spec
               :test {:content content})
   (get-record id))
@@ -46,8 +46,6 @@
   (GET "/" []
        (splash))
   (route/not-found "Not found"))
-
-(def app-test (-> (fn [_] {:status 404 :body "not found"}) (wrap-castra app-routes)))
 
 (defn -main []
   (let [port (Integer. (or (env :port) 5000))]
