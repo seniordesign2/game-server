@@ -15,7 +15,7 @@
 
 (cas/defrpc get-record [id]
   (first (db/query db-spec
-                   ["SELECT * FROM test WHERE id = ?" id])))
+                   ["SELECT * FROM test WHERE id = 1"])))
 
 (cas/defrpc update-record [id {:keys [content]}]
   (db/insert! db-spec
