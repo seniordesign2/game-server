@@ -20,7 +20,7 @@
        :count))
 
 (cas/defrpc rpc-test []
-  "Test success!"(table-size))
+  (table-size))
 
 (cas/defrpc get-record [id]
   (first (db/query db-spec
