@@ -8,11 +8,11 @@
             [castra.core :as cas]
             [castra.middleware :refer [wrap-castra]]))
 
+(def db-spec (str (env :database-url) "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"))
+
 (defn record [input]
   (db/insert! db-spec
               :test {:content input}))
-
-(def db-spec (str (env :database-url) "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"))
 
 (cas/defrpc rpc-test []
   "Test success!")
