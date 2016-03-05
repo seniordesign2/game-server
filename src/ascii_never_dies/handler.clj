@@ -18,12 +18,9 @@
   (:count (first (db/query db-spec
                            ["SELECT COUNT(*) FROM test"]))))
 
-(cas/defrpc rpc-test []
-  (table-size))
-
 (cas/defrpc get-record [id]
-  (:content (first (db/query db-spec
-                             ["SELECT * FROM test WHERE id = ?" (Integer. id)]))))
+  (first (db/query db-spec
+                   ["SELECT * FROM test WHERE id = ?" (Integer. id)])))
 
 (cas/defrpc update-record [content]
   (do
