@@ -51,11 +51,11 @@
 (defn allow-cross-origin [handler]
   (fn [request]
     (let [response (handler request)]
-      (assoc-in response [:headers "Access-Control-Allow-Origin"] "localhost:8000"))))
+      (assoc-in response [:headers "Access-Control-Allow-Credentials"] "false"))))
 
 (def app
   (-> app-routes
-      (wrap-castra 'ascii-never-dies)
+      (wrap-castra 'ascii-never-dies.handler)
       (allow-cross-origin)))
 
 (defn -main []
