@@ -49,15 +49,11 @@
        (splash))
   (route/not-found "Not found"))
 
-(defn allow-cross-origin [handler]
-  (wrap-cors handler
-             :access-control-allow-origin [#"http://localhost:8000/"]
-             :access-control-allow-methods [:get :put :post :delete]))
-
 (def app
   (-> app-routes
       (wrap-castra 'ascii-never-dies.handler)
-      (allow-cross-origin)))
+      (wrap-cors :access-control-allow-origin [#".*"]
+                 :access-control-allow-methods [:get :put :post :delete])))
 
 (defn -main []
   (let [port (Integer. (or (env :port) 5000))]
