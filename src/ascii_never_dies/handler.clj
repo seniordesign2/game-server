@@ -29,7 +29,7 @@
 
 (defn splash []
   {:status 200
-   :headers {"Content-Type" "text/html"}
+   :headers {"Content-Type" "text"}
    :body (concat ["<ul>"]
                  (for [sel (db/query db-spec
                                      ["SELECT * FROM test"])]
