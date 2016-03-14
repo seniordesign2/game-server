@@ -51,9 +51,7 @@
 
 (def app
   (-> app-routes
-      (wrap-castra 'ascii-never-dies.handler)
-      (wrap-cors :access-control-allow-origin [#"http://localhost:8000"]
-                 :access-control-allow-methods [:get :put :post :delete])))
+      (wrap-castra 'ascii-never-dies.handler)))
 
 (defn -main []
   (let [port (Integer. (or (env :port) 5000))]
