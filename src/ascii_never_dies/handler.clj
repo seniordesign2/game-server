@@ -48,10 +48,10 @@
        (splash))
   (route/not-found "Not found"))
 
-(defn wrap-custom [handler content-type]
+(defn wrap-custom [handler]
   (fn [request]
     (let [response (handler request)]
-      (assoc-in response [:headers "Content-Type"] content-type))))
+      (assoc-in response [:headers "Test"] "testing"))))
 
 (def app
   (-> app-routes
@@ -60,4 +60,4 @@
 
 (defn -main []
   (let [port (Integer. (or (env :port) 5000))]
-    (jetty/run-jetty (wrap-castra app-routes 'ascii-never-dies.handler) {:port port :join? false})))
+    (jetty/run-jetty app {:port port :join? false})))
