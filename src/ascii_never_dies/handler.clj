@@ -29,7 +29,7 @@
 
 (defn splash []
   {:status 200
-   :headers {"Content-Type" "text"}
+   :headers {"Content-Type" "text/html"}
    :body (concat ["<ul>"]
                  (for [sel (db/query db-spec
                                      ["SELECT * FROM test"])]
@@ -48,15 +48,15 @@
        (splash))
   (route/not-found "Not found"))
 
-(defn wrap-custom [handler]
+(defn wrap-custom [handler content-type]
   (fn [request]
     (let [response (handler request)]
-      (assoc-in response [:headers "Test"] "Hello World"))))
+      (assoc-in response [:headers "Content-Type"] content-type))))
 
 (def app
   (-> app-routes
       (wrap-castra 'ascii-never-dies.handler)
-      (wrap-custom)))
+      (wrap-custom "text")))
 
 (defn -main []
   (let [port (Integer. (or (env :port) 5000))]
