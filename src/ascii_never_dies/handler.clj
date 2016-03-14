@@ -48,15 +48,17 @@
        (splash))
   (route/not-found "Not found"))
 
-(defn wrap-origin [handler]
+(defn wrap-cors [handler]
   (fn [request]
     (let [response (handler request)]
-      (assoc-in response [:headers "Access-Control-Allow-Origin"] "http://localhost:8000"))))
+      (-> response
+          (assoc-in [:headers "Access-Control-Allow-Origin"] "http://localhost:8000")
+          (assoc-in [:headers "Access-Control-Allow-Credentials"] "true")))))
 
 (def app
   (-> app-routes
       (wrap-castra 'ascii-never-dies.handler)
-      (wrap-origin)))
+      (wrap-cors)))
 
 (defn -main []
   (let [port (Integer. (or (env :port) 5000))]
