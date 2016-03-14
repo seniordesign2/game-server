@@ -56,7 +56,7 @@
 (def app
   (-> app-routes
       (wrap-castra 'ascii-never-dies.handler)
-      (wrap-custom "text")))
+      (wrap-custom)))
 
 (defn -main []
   (let [port (Integer. (or (env :port) 5000))]
