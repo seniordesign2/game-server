@@ -6,7 +6,8 @@
             [environ.core :refer [env]]
             [clojure.java.jdbc :as db]
             [castra.core :as cas]
-            [castra.middleware :refer [wrap-castra]]))
+            [castra.middleware :refer [wrap-castra]]
+            [ring.middleware.cors :refer [wrap-cors]]))
 
 (def db-spec (str (env :database-url) "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"))
 
@@ -49,9 +50,7 @@
   (route/not-found "Not found"))
 
 (defn allow-cross-origin [handler]
-  (fn [request]
-    (let [response (handler request)]
-      (assoc-in response [:headers "Access-Control-Allow-Credentials"] "false"))))
+  (wrap-cors handler :access-control-allow-origin [#"*"]))
 
 (def app
   (-> app-routes
