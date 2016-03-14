@@ -6,8 +6,7 @@
             [environ.core :refer [env]]
             [clojure.java.jdbc :as db]
             [castra.core :as cas]
-            [castra.middleware :refer [wrap-castra]]
-            [ring.middleware.cors :refer [wrap-cors]]))
+            [castra.middleware :refer [wrap-castra]]))
 
 (def db-spec (str (env :database-url) "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"))
 
@@ -49,10 +48,6 @@
        (splash))
   (route/not-found "Not found"))
 
-(def app
-  (-> app-routes
-      (wrap-castra 'ascii-never-dies.handler)))
-
 (defn -main []
   (let [port (Integer. (or (env :port) 5000))]
-    (jetty/run-jetty app {:port port :join? false})))
+    (jetty/run-jetty (wrap-castra app-routes 'ascii-never-dies.handler) {:port port :join? false})))
