@@ -50,7 +50,9 @@
   (route/not-found "Not found"))
 
 (defn allow-cross-origin [handler]
-  (wrap-cors handler :access-control-allow-origin [#"http://localhost:8000/"]))
+  (wrap-cors handler
+             :access-control-allow-origin [#"http://localhost:8000/"]
+             :access-control-allow-methods [:get :put :post :delete]))
 
 (def app
   (-> app-routes
