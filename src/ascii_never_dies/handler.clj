@@ -48,15 +48,15 @@
        (splash))
   (route/not-found "Not found"))
 
-(defn wrap-custom [handler]
+(defn wrap-origin [handler]
   (fn [request]
     (let [response (handler request)]
-      (assoc-in response [:headers "Test"] "testing"))))
+      (assoc-in response [:headers "Access-Control-Allow-Origin"] "http://localhost:8000"))))
 
 (def app
   (-> app-routes
       (wrap-castra 'ascii-never-dies.handler)
-      (wrap-custom)))
+      (wrap-origin)))
 
 (defn -main []
   (let [port (Integer. (or (env :port) 5000))]
