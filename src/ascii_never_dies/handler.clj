@@ -52,7 +52,7 @@
 (def app
   (-> app-routes
       (wrap-castra 'ascii-never-dies.handler)
-      (wrap-cors :access-control-allow-origin [#".*"]
+      (wrap-cors :access-control-allow-origin [#"http://localhost:8000"]
                  :access-control-allow-methods [:get :put :post :delete])))
 
 (defn -main []
