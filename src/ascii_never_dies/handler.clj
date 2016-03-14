@@ -48,6 +48,16 @@
        (splash))
   (route/not-found "Not found"))
 
+(defn allow-cross-origin [handler]
+  (fn [request]
+    (let [response (handler request)]
+      (assoc-in response [:headers "Access-Control-Allow-Origin"] "*"))))
+
+(def app
+  (-> app-routes
+      (wrap-castra 'ascii-never-dies)
+      (allow-cross-origin)))
+
 (defn -main []
   (let [port (Integer. (or (env :port) 5000))]
-    (jetty/run-jetty (wrap-castra app-routes 'ascii-never-dies.handler) {:port port :join? false})))
+    (jetty/run-jetty app {:port port :join? false})))
