@@ -6,7 +6,8 @@
             [environ.core :refer [env]]
             [clojure.java.jdbc :as db]
             [castra.core :as cas]
-            [castra.middleware :refer [wrap-castra]]))
+            [castra.middleware :refer [wrap-castra]]
+            [ring.middleware.cors :refer [wrap-cors]]))
 
 (def db-spec (str (env :database-url) "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"))
 
@@ -29,7 +30,7 @@
 
 (defn splash []
   {:status 200
-   :headers {"Content-Type" "text/html" "Access-Control-Allow-Origin" "*"}
+   :headers {"Content-Type" "text/html"}
    :body (concat ["<ul>"]
                  (for [sel (db/query db-spec
                                      ["SELECT * FROM test"])]
@@ -40,7 +41,7 @@
   (GET "/add/:input" [input]
        (record input)
        {:status 200
-        :headers {"Content-Type" "text/html" "Access-Control-Allow-Origin" "*"}
+        :headers {"Content-Type" "text/html"}
         :body (str "<b>Added:</b><br/>"
                    input
                    "<br/><a href=\"/\">Back</a>")})
@@ -48,6 +49,12 @@
        (splash))
   (route/not-found "Not found"))
 
+(def app
+  (-> app-routes
+      (wrap-castra 'ascii-never-dies.handler)
+      (wrap-cors :access-control-allow-origin #"http://localhost:8000/"
+                 :access-control-allow-methods [:get :put :post :delete])))
+
 (defn -main []
   (let [port (Integer. (or (env :port) 5000))]
-    (jetty/run-jetty (wrap-castra app-routes 'ascii-never-dies.handler) {:port port :join? false})))
+    (jetty/run-jetty app {:port port :join? false})))
