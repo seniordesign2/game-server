@@ -51,7 +51,7 @@
 (defn allow-cross-origin [handler]
   (fn [request]
     (let [response (handler request)]
-      (assoc-in response [:headers "Access-Control-Allow-Origin"] "*"))))
+      (assoc-in response [:headers "Access-Control-Allow-Origin"] "localhost:8000"))))
 
 (def app
   (-> app-routes
