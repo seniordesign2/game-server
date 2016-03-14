@@ -29,7 +29,7 @@
 
 (defn splash []
   {:status 200
-   :headers {"Content-Type" "text/html" "Access-Control-Allow-Origin: *"}
+   :headers {"Content-Type" "text/html"}
    :body (concat ["<ul>"]
                  (for [sel (db/query db-spec
                                      ["SELECT * FROM test"])]
@@ -40,7 +40,7 @@
   (GET "/add/:input" [input]
        (record input)
        {:status 200
-        :headers {"Content-Type" "text/html" "Access-Control-Allow-Origin: *"}
+        :headers {"Content-Type" "text/html"}
         :body (str "<b>Added:</b><br/>"
                    input
                    "<br/><a href=\"/\">Back</a>")})
