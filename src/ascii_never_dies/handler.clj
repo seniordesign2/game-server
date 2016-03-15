@@ -12,7 +12,7 @@
 
 (defn record [input]
   (db/insert! db-spec
-              :game_data {:content input}))
+              :game_data {:username input}))
 
 (defn table-size []
   (:count (first (db/query db-spec
@@ -20,7 +20,7 @@
 
 (cas/defrpc get-record [id]
   (first (db/query db-spec
-                   ["SELECT * FROM game_data WHERE id = ?" (Integer. id)])))
+                   ["SELECT * FROM game_data WHERE username = ?" id])))
 
 (cas/defrpc update-record [content]
   (do
