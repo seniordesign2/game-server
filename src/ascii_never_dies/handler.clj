@@ -18,14 +18,13 @@
   (:count (first (db/query db-spec
                            ["SELECT COUNT(*) FROM game_data"]))))
 
-(cas/defrpc get-record [id]
+(cas/defrpc get-record [username]
   (first (db/query db-spec
-                   ["SELECT * FROM game_data WHERE username = ?" id])))
+                   ["SELECT * FROM game_data WHERE username = ?" username])))
 
 (cas/defrpc update-record [content]
-  (do
-    (record content)
-    (get-record (table-size))))
+  (record content)
+  (str "Success! Added: " (get-record content)))
 
 (defn splash []
   {:status 200
