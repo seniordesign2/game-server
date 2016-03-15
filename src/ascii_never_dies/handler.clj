@@ -53,7 +53,7 @@
     (let [response (handler request)]
       (-> response
           (assoc-in [:headers "Access-Control-Allow-Origin"] "http://localhost:8000")
-          (assoc-in [:headers "Access-Control-Allow-Methods"] [:get :post])
+          (assoc-in [:headers "Access-Control-Allow-Methods"] "GET,POST")
           (assoc-in [:headers "Access-Control-Allow-Credentials"] "true")))))
 
 (def app
