@@ -12,7 +12,7 @@
 
 (defn record [input]
   (db/insert! db-spec
-              :game_data {:username input}))
+              :game_data {:username input :password "" :x 0 :y 0}))
 
 (defn table-size []
   (:count (first (db/query db-spec
