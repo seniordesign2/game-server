@@ -56,7 +56,9 @@
                 response)
               (assoc-in [:headers "Access-Control-Allow-Origin"] "http://localhost:8000")
               (assoc-in [:headers "Access-Control-Allow-Methods"] "GET,POST,OPTIONS")
-              (assoc-in [:headers "Access-Control-Allow-Credentials"] "true")))))
+              (assoc-in [:headers "Access-Control-Allow-Credentials"] "true")
+              (assoc-in [:headers "Access-Control-Allow-Headers"]
+                        "accept, content-type, x-castra-csrf, x-castra-tunnel, x-castra-validate-only")))))
 
 (def app
   (-> app-routes
