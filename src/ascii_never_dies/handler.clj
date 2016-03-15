@@ -51,10 +51,12 @@
 (defn wrap-cors [handler]
   (fn [request]
     (let [response (handler request)]
-      (-> response
-          (assoc-in [:headers "Access-Control-Allow-Origin"] "http://localhost:8000")
-          (assoc-in [:headers "Access-Control-Allow-Methods"] "GET,POST,OPTIONS")
-          (assoc-in [:headers "Access-Control-Allow-Credentials"] "true")))))
+      (some-> (if (= (:request-method request) :options)
+                {:status 200}
+                response)
+              (assoc-in [:headers "Access-Control-Allow-Origin"] "http://localhost:8000")
+              (assoc-in [:headers "Access-Control-Allow-Methods"] "GET,POST,OPTIONS")
+              (assoc-in [:headers "Access-Control-Allow-Credentials"] "true")))))
 
 (def app
   (-> app-routes
