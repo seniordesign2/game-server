@@ -10,42 +10,44 @@
 
 (def db-spec (str (env :database-url) "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"))
 
-(defn record [input]
+(defn record [input table]
   (db/insert! db-spec
-              :test {:content input}))
+              table {:content input}))
 
-(defn table-size []
+(defn table-size [table]
   (:count (first (db/query db-spec
-                           ["SELECT COUNT(*) FROM test"]))))
+                           ["SELECT COUNT(*) FROM ?" (name table)]))))
 
-(cas/defrpc get-record [id]
+(cas/defrpc get-record [id table]
   (first (db/query db-spec
-                   ["SELECT * FROM test WHERE id = ?" (Integer. id)])))
+                   ["SELECT * FROM ? WHERE id = ?" (name table) (Integer. id)])))
 
-(cas/defrpc update-record [content]
+(cas/defrpc update-record [content table]
   (do
-    (record content)
-    (get-record (table-size))))
+    (record content table)
+    (get-record (table-size table) table)))
 
-(defn splash []
+(defn splash [table]
   {:status 200
    :headers {"Content-Type" "text/html"}
    :body (concat ["<ul>"]
                  (for [sel (db/query db-spec
-                                     ["SELECT * FROM test"])]
+                                     ["SELECT * FROM ?" (name table)])]
                    (format "<li>%s</li>" sel))
                  ["</ul>"])})
 
 (defroutes app-routes
-  (GET "/add/:input" [input]
-       (record input)
+  (GET "/test/add/:input" [input]
+       (record input :test)
        {:status 200
         :headers {"Content-Type" "text/html"}
         :body (str "<b>Added:</b><br/>"
                    input
                    "<br/><a href=\"/\">Back</a>")})
+  (GET "/test" []
+       (splash :test))
   (GET "/" []
-       (splash))
+       (splash :game_data))
   (route/not-found "Not found"))
 
 (defn wrap-cors [handler]
