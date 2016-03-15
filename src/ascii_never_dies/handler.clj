@@ -10,44 +10,44 @@
 
 (def db-spec (str (env :database-url) "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"))
 
-(defn record [input table]
+(defn record [input]
   (db/insert! db-spec
-              table {:content input}))
+              :game_data {:content input}))
 
-(defn table-size [table]
+(defn table-size []
   (:count (first (db/query db-spec
-                           ["SELECT COUNT(*) FROM ?" (name table)]))))
+                           ["SELECT COUNT(*) FROM game_data"]))))
 
-(cas/defrpc get-record [id table]
+(cas/defrpc get-record [id]
   (first (db/query db-spec
-                   ["SELECT * FROM ? WHERE id = ?" (name table) (Integer. id)])))
+                   ["SELECT * FROM game_data WHERE id = ?" (Integer. id)])))
 
-(cas/defrpc update-record [content table]
+(cas/defrpc update-record [content]
   (do
-    (record content table)
-    (get-record (table-size table) table)))
+    (record content)
+    (get-record (table-size))))
 
-(defn splash [table]
+(defn splash []
   {:status 200
    :headers {"Content-Type" "text/html"}
    :body (concat ["<ul>"]
                  (for [sel (db/query db-spec
-                                     ["SELECT * FROM ?" (name table)])]
+                                     ["SELECT * FROM game_data"])]
                    (format "<li>%s</li>" sel))
                  ["</ul>"])})
 
 (defroutes app-routes
-  (GET "/test/add/:input" [input]
-       (record input :test)
-       {:status 200
-        :headers {"Content-Type" "text/html"}
-        :body (str "<b>Added:</b><br/>"
-                   input
-                   "<br/><a href=\"/\">Back</a>")})
-  (GET "/test" []
-       (splash :test))
+  ;; (GET "/test/add/:input" [input]
+  ;;      (record input :test)
+  ;;      {:status 200
+  ;;       :headers {"Content-Type" "text/html"}
+  ;;       :body (str "<b>Added:</b><br/>"
+  ;;                  input
+  ;;                  "<br/><a href=\"/test\">Back</a>")})
+  ;; (GET "/test" []
+  ;;      (splash :test))
   (GET "/" []
-       (splash :game_data))
+       (splash))
   (route/not-found "Not found"))
 
 (defn wrap-cors [handler]
