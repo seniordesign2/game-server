@@ -31,6 +31,10 @@
               {:x x :y y} ["username = ?" username])
   (str "Saved coords: [" x "," y "]"))
 
+(cas/defrpc load-coords [username]
+  (first (db/query db-spec
+                   ["SELECT x, y FROM game_data WHERE username = ?" username])))
+
 (defn splash []
   {:status 200
    :headers {"Content-Type" "text/html"}
