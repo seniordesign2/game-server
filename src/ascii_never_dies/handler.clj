@@ -26,6 +26,11 @@
   (record content)
   (str "Success! Added: " (get-record content)))
 
+(cas/defrpc save-coords [username x y]
+  (db/update! db-spec :game_data
+              {:x x :y y} ["username = ?" username])
+  (str "Saved coords: [" x "," y "]"))
+
 (defn splash []
   {:status 200
    :headers {"Content-Type" "text/html"}
