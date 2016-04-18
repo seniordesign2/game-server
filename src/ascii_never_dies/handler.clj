@@ -11,9 +11,9 @@
 (def db-spec (str (env :database-url)
                   "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"))
 
-(defn record [input]
+(defn record [username]
   (db/insert! db-spec
-              :game_data {:username input :password ""
+              :game_data {:username username :password ""
                           :x 0 :y 0 :cur-health -1
                           :room-idx {0 0} :rooms []}))
 
@@ -21,13 +21,13 @@
   (:count (first (db/query db-spec
                            ["SELECT COUNT(*) FROM game_data"]))))
 
-(cas/defrpc get-record [username]
+(cas/defrpc get-user [username]
   (first (db/query db-spec
                    ["SELECT * FROM game_data WHERE username = ?" username])))
 
-(cas/defrpc update-record [content]
-  (record content)
-  (str "Success! Added: " (get-record content)))
+(cas/defrpc add-user [username]
+  (record username)
+  (str "Success! Added: " (get-user username)))
 
 (cas/defrpc save [username state]
   (let [{x :x y :y cur-health :cur-health} (:player state)
