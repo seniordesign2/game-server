@@ -8,11 +8,14 @@
             [castra.core :as cas]
             [castra.middleware :refer [wrap-castra]]))
 
-(def db-spec (str (env :database-url) "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"))
+(def db-spec (str (env :database-url)
+                  "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"))
 
 (defn record [input]
   (db/insert! db-spec
-              :game_data {:username input :password "" :x 0 :y 0}))
+              :game_data {:username input :password ""
+                          :x 0 :y 0 :cur-health -1
+                          :room-idx {0 0} :rooms []}))
 
 (defn table-size []
   (:count (first (db/query db-spec
@@ -26,14 +29,22 @@
   (record content)
   (str "Success! Added: " (get-record content)))
 
-(cas/defrpc save-coords [username x y]
-  (db/update! db-spec :game_data
-              {:x x :y y} ["username = ?" username])
-  (str "Saved coords: [" x "," y "]"))
+(cas/defrpc save [username state]
+  (let [{x :x y :y cur-health :cur-health} (:player state)
+        room-idx (:room-idx state)
+        rooms (:rooms state)]
+    (db/update! db-spec :game_data
+                {:x x :y y :cur-health cur-health
+                 :room-idx room-idx
+                 :rooms rooms}
+                ["username = ?" username])
+    (str "Saved!")))
 
-(cas/defrpc load-coords [username]
+(cas/defrpc load [username]
   (first (db/query db-spec
-                   ["SELECT x, y FROM game_data WHERE username = ?" username])))
+                   [(str "SELECT x, y, cur-health, "
+                         "room-idx, rooms "
+                         "FROM game_data WHERE username = ?" username)])))
 
 (defn splash []
   {:status 200
