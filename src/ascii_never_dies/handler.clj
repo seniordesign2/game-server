@@ -37,8 +37,8 @@
   [username]
   (db/insert! db-spec :game_data
               {:username username :password ""
-               :x 0 :y 0 :cur-health -1
-               :room-idx {0 0} :rooms []}))
+               :x 0 :y 0 :cur_health -1
+               :room_idx {0 0} :rooms []}))
 
 ;; ---------------------------------------------------------------------------
 ;; RPC functions
@@ -62,8 +62,8 @@
         room-idx (:room-idx state)
         rooms (:rooms state)]
     (db/update! db-spec :game_data
-                {:x x :y y :cur-health cur-health
-                 :room-idx room-idx
+                {:x x :y y :cur_health cur-health
+                 :room_idx room-idx
                  :rooms rooms}
                 ["username = ?" username])
     (str "Saved!")))
@@ -72,8 +72,8 @@
   "Returns the currently stored state for the given user."
   [username]
   (first (db/query db-spec
-                   [(str "SELECT x, y, cur-health, "
-                         "room-idx, rooms "
+                   [(str "SELECT x, y, cur_health, "
+                         "room_idx, rooms "
                          "FROM game_data WHERE username = ?" username)])))
 
 ;; ---------------------------------------------------------------------------
