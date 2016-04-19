@@ -38,7 +38,19 @@
   (db/insert! db-spec :game_data
               {:username username :password ""
                :x 0 :y 0 :cur_health -1
-               :room_idx {0 0} :rooms []}))
+               :room_idx {:x 0 :y 0} :rooms {}}))
+
+(defn vec->map
+  "Converts a vector to an IDed map."
+  [v]
+  (into {} (for [i (range (count v))
+                 :let [el (nth v i)]]
+             [(inc i) el])))
+
+(defn map->vec
+  "Converts an IDed map to a vector."
+  [m]
+  (vals m))
 
 ;; ---------------------------------------------------------------------------
 ;; RPC functions
@@ -64,7 +76,7 @@
     (db/update! db-spec :game_data
                 {:x x :y y :cur_health cur-health
                  :room_idx room-idx
-                 :rooms rooms}
+                 :rooms (vec->map rooms)}
                 ["username = ?" username])
     (str "Saved!")))
 
