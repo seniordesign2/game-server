@@ -94,7 +94,7 @@
     (db/update! db-spec :game_data
                 {:x x :y y :cur_health cur-health
                  :room_idx room-idx
-                 :rooms (vec->map rooms)}
+                 :rooms rooms}
                 ["username = ?" username])
     (str "Saved!")))
 
