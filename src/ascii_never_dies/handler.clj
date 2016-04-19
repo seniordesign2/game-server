@@ -76,7 +76,6 @@
 (cas/defrpc save
   "Records the given state of the user into the database."
   [username state]
-  #_(str "Saved!")
   (let [{x :x y :y cur-health :cur-health} (:player state)
         room-idx (:room-idx state)
         rooms (:rooms state)]
@@ -90,10 +89,9 @@
 (cas/defrpc load
   "Returns the currently stored state for the given user."
   [username]
-  #_(str "Loaded!")
   (first (db/query db-spec
-                   [(str "SELECT x, y, cur_health, "
-                         "room_idx, rooms "
+                   [(str "SELECT x, y, cur_health, " 
+                         "room_idx, rooms " 
                          "FROM game_data WHERE username = ?" username)])))
 
 ;; ---------------------------------------------------------------------------
