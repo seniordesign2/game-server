@@ -19,13 +19,19 @@
 ;; ---------------------------------------------------------------------------
 ;; Helper functions
 
-; Auto converts between Clojure maps and JSON objects
+(defn value-to-json
+  "Converts Clojure data to a JSON encoded object."
+  [value]
+  (doto (PGobject.)
+    (.setType "json")
+    (.setValue (json/write-str value))))
+
 (extend-protocol db/ISQLValue
   clojure.lang.IPersistentMap
-  (sql-value [value]
-    (doto (PGobject.)
-      (.setType "json")
-      (.setValue (json/write-str value)))))
+  (sql-value [value] (value-to-json value))
+  clojure.lang.IPersistentVector
+  (sql-value [value] (value-to-json value)))
+
 (extend-protocol db/IResultSetReadColumn
   PGobject
   (result-set-read-column [pgobj metadata idx]
