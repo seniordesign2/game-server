@@ -76,7 +76,7 @@
 (cas/defrpc save
   "Records the given state of the user into the database."
   [username state]
-  (str @state)
+  (str state)
   #_(let [{x :x y :y cur-health :cur-health} (:player state)
         room-idx (:room-idx state)
         rooms (:rooms state)]
@@ -101,7 +101,7 @@
 (defn splash []
   {:status 200
    :headers {"Content-Type" "text/html"}
-   :body (concat ["<ul>"]
+   :body (concat ["test<br><ul>"]
                  (for [sel (db/query db-spec
                                      ["SELECT * FROM game_data"])]
                    (format "<li>%s</li>" sel))
