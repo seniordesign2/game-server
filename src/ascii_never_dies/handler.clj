@@ -6,7 +6,8 @@
             [environ.core :refer [env]]
             [clojure.java.jdbc :as db]
             [castra.core :as cas]
-            [castra.middleware :refer [wrap-castra]]))
+            [castra.middleware :refer [wrap-castra]]
+            [clojure.data.json :as json]))
 
 ;; ---------------------------------------------------------------------------
 ;; Database specification
@@ -18,7 +19,7 @@
 ;; Helper functions
 
 ; Auto converts vectors into SQL arrays when needed
-(extend-protocol db/ISQLParameter
+#_(extend-protocol db/ISQLParameter
   clojure.lang.IPersistentVector
   (set-parameter [v ^java.sql.PreparedStatement stmt ^long i]
     (let [conn (.getConnection stmt)
@@ -27,10 +28,26 @@
       (if-let [elem-type (when (= (first type-name) \_) (apply str (rest type-name)))]
         (.setObject stmt i (.createArrayOf conn elem-type (to-array v)))
         (.setObject stmt i v)))))
-(extend-protocol db/IResultSetReadColumn
+#_(extend-protocol db/IResultSetReadColumn
   java.sql.Array
   (result-set-read-column [val _ _]
     (into [] (.getArray val))))
+
+; Auto converts between Clojure maps and JSON objects
+(extend-protocol db/ISQLValue
+  clojure.lang.IPersistentMap
+  (sql-value [value]
+    (doto (PGobject.)
+      (.setType "json")
+      (.setValue (json/write-str value)))))
+(extend-protocol db/IResultSetReadColumn
+  PGobject
+  (result-set-read-column [pgobj metadata idx]
+    (let [type  (.getType pgobj)
+          value (.getValue pgobj)]
+      (case type
+        "json" (json/read-str value :key-fn keyword)
+        :else value))))
 
 (defn record
   "Records a new username with default values."
@@ -38,7 +55,7 @@
   (db/insert! db-spec :game_data
               {:username username :password ""
                :x 0 :y 0 :cur_health -1
-               :room_idx '{"x": 0 "y": 0}' :rooms '{}'}))
+               :room_idx {:x 0 :y 0} :rooms {}}))
 
 (defn vec->map
   "Converts a vector to an IDed map."
