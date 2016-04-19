@@ -88,7 +88,8 @@
 (cas/defrpc save
   "Records the given state of the user into the database."
   [username state]
-  (let [{x :x y :y cur-health :cur-health} (:player state)
+  (str "Saved!")
+  #_(let [{x :x y :y cur-health :cur-health} (:player state)
         room-idx (:room-idx state)
         rooms (:rooms state)]
     (db/update! db-spec :game_data
