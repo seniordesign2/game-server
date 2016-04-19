@@ -7,7 +7,8 @@
             [clojure.java.jdbc :as db]
             [castra.core :as cas]
             [castra.middleware :refer [wrap-castra]]
-            [clojure.data.json :as json]))
+            [clojure.data.json :as json])
+  (:import org.postgresql.util.PGobject))
 
 ;; ---------------------------------------------------------------------------
 ;; Database specification
