@@ -58,18 +58,6 @@
                :x 0 :y 0 :cur_health -1
                :room_idx {:x 0 :y 0} :rooms {}}))
 
-(defn vec->map
-  "Converts a vector to an IDed map."
-  [v]
-  (into {} (for [i (range (count v))
-                 :let [el (nth v i)]]
-             [(inc i) el])))
-
-(defn map->vec
-  "Converts an IDed map to a vector."
-  [m]
-  (vals m))
-
 ;; ---------------------------------------------------------------------------
 ;; RPC functions
 
@@ -102,7 +90,8 @@
 (cas/defrpc load
   "Returns the currently stored state for the given user."
   [username]
-  (first (db/query db-spec
+  (str "Loaded!")
+  #_(first (db/query db-spec
                    [(str "SELECT x, y, cur_health, "
                          "room_idx, rooms "
                          "FROM game_data WHERE username = ?" username)])))
