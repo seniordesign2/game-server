@@ -8,28 +8,56 @@
             [castra.core :as cas]
             [castra.middleware :refer [wrap-castra]]))
 
+;; ---------------------------------------------------------------------------
+;; Database specification
+
 (def db-spec (str (env :database-url)
                   "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"))
 
-(defn record [username]
-  (db/insert! db-spec
-              :game_data {:username username :password ""
-                          :x 0 :y 0 :cur-health -1
-                          :room-idx {0 0} :rooms []}))
+;; ---------------------------------------------------------------------------
+;; Helper functions
 
-(defn table-size []
-  (:count (first (db/query db-spec
-                           ["SELECT COUNT(*) FROM game_data"]))))
+; Auto converts vectors into SQL arrays when needed
+(extend-protocol db/ISQLParameter
+  clojure.lang.IPersistentVector
+  (set-parameter [v ^java.sql.PreparedStatement stmt ^long i]
+    (let [conn (.getConnection stmt)
+          meta (.getParameterMetaData stmt)
+          type-name (.getParameterTypeName meta i)]
+      (if-let [elem-type (when (= (first type-name) \_) (apply str (rest type-name)))]
+        (.setObject stmt i (.createArrayOf conn elem-type (to-array v)))
+        (.setObject stmt i v)))))
+(extend-protocol db/IResultSetReadColumn
+  java.sql.Array
+  (result-set-read-column [val _ _]
+    (into [] (.getArray val))))
 
-(cas/defrpc get-user [username]
+(defn record
+  "Records a new username with default values."
+  [username]
+  (db/insert! db-spec :game_data
+              {:username username :password ""
+               :x 0 :y 0 :cur-health -1
+               :room-idx {0 0} :rooms []}))
+
+;; ---------------------------------------------------------------------------
+;; RPC functions
+
+(cas/defrpc get-user
+  "Returns all information about a given user."
+  [username]
   (first (db/query db-spec
                    ["SELECT * FROM game_data WHERE username = ?" username])))
 
-(cas/defrpc add-user [username]
+(cas/defrpc add-user
+  "Adds a user to the database with default values."
+  [username]
   (record username)
   (str "Success! Added: " (get-user username)))
 
-(cas/defrpc save [username state]
+(cas/defrpc save
+  "Records the given state of the user into the database."
+  [username state]
   (let [{x :x y :y cur-health :cur-health} (:player state)
         room-idx (:room-idx state)
         rooms (:rooms state)]
@@ -40,11 +68,16 @@
                 ["username = ?" username])
     (str "Saved!")))
 
-(cas/defrpc load [username]
+(cas/defrpc load
+  "Returns the currently stored state for the given user."
+  [username]
   (first (db/query db-spec
                    [(str "SELECT x, y, cur-health, "
                          "room-idx, rooms "
                          "FROM game_data WHERE username = ?" username)])))
+
+;; ---------------------------------------------------------------------------
+;; Server webpage
 
 (defn splash []
   {:status 200
