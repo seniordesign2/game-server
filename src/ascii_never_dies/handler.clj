@@ -19,21 +19,6 @@
 ;; ---------------------------------------------------------------------------
 ;; Helper functions
 
-; Auto converts vectors into SQL arrays when needed
-#_(extend-protocol db/ISQLParameter
-  clojure.lang.IPersistentVector
-  (set-parameter [v ^java.sql.PreparedStatement stmt ^long i]
-    (let [conn (.getConnection stmt)
-          meta (.getParameterMetaData stmt)
-          type-name (.getParameterTypeName meta i)]
-      (if-let [elem-type (when (= (first type-name) \_) (apply str (rest type-name)))]
-        (.setObject stmt i (.createArrayOf conn elem-type (to-array v)))
-        (.setObject stmt i v)))))
-#_(extend-protocol db/IResultSetReadColumn
-  java.sql.Array
-  (result-set-read-column [val _ _]
-    (into [] (.getArray val))))
-
 ; Auto converts between Clojure maps and JSON objects
 (extend-protocol db/ISQLValue
   clojure.lang.IPersistentMap
@@ -76,8 +61,7 @@
 (cas/defrpc save
   "Records the given state of the user into the database."
   [username state]
-  (str "Saved!")
-  #_(let [{x :x y :y cur-health :cur-health} (:player state)
+  (let [{x :x y :y cur-health :cur-health} (:player state)
         room-idx (:room-idx state)
         rooms (:rooms state)]
     (db/update! db-spec :game_data
@@ -101,7 +85,7 @@
 (defn splash []
   {:status 200
    :headers {"Content-Type" "text/html"}
-   :body (concat ["test<br><ul>"]
+   :body (concat ["<ul>"]
                  (for [sel (db/query db-spec
                                      ["SELECT * FROM game_data"])]
                    (format "<li>%s</li>" sel))
