@@ -38,7 +38,7 @@
   (db/insert! db-spec :game_data
               {:username username :password ""
                :x 0 :y 0 :cur_health -1
-               :room_idx {:x 0 :y 0} :rooms {}}))
+               :room_idx '{"x": 0 "y": 0}' :rooms '{}'}))
 
 (defn vec->map
   "Converts a vector to an IDed map."
