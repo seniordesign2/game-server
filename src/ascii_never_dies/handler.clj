@@ -83,7 +83,8 @@
   (first (db/query db-spec
                    [(str "SELECT x, y, cur_health, "
                          "room_idx, rooms "
-                         "FROM game_data WHERE username = ?" username)])))
+                         "FROM game_data WHERE username = ?")
+                    username])))
 
 ;; ---------------------------------------------------------------------------
 ;; Server webpage
