@@ -30,6 +30,8 @@
   clojure.lang.IPersistentMap
   (sql-value [value] (value-to-json value))
   clojure.lang.IPersistentVector
+  (sql-value [value] (value-to-json value))
+  clojure.lang.PersistentHashSet
   (sql-value [value] (value-to-json value)))
 
 (extend-protocol db/IResultSetReadColumn
